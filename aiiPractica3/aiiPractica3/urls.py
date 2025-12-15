@@ -25,5 +25,6 @@ urlpatterns = [
     path('loadRS/', views.loadRS),
     path('index.html/', views.index),
     path('animesMasPopulares',views.mostrar_animes_mas_puntuaciones),
-    path('animesPorFormato/',views.animesPorFormato)
+    path('animesPorFormato/',views.animesPorFormato),
+    path('recomendarUsuarios/',views.recomendar_usuarios_animes)
 ]

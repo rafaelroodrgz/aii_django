@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from main.populateDB import populate
 from main.models import Anime
-from main.forms import BusquedaPorFormatoForm
+from main.forms import BusquedaPorFormatoForm, AnimeBusquedaForm
 
 from main.recommendations import  transformPrefs, calculateSimilarItems, getRecommendations, getRecommendedItems, topMatches
 from main.models import Puntuacion, Anime
@@ -63,3 +63,27 @@ def mostrar_animes_mas_puntuaciones(request):
 # usando la distancia Euclidea como medida de similitud. 
     animes = Anime.objects.annotate(num_rating=Count('puntuacion__puntuacion')).order_by('-num_rating')[:3]
     return render(request, 'animes_mas_puntuados.html', {'animes':animes, 'STATIC_URL':settings.STATIC_URL})
+
+def recomendar_usuarios_animes(request):
+    formulario = AnimeBusquedaForm()
+    items = None
+    anime = None
+    
+    if request.method=='POST':
+        form = AnimeBusquedaForm(request.POST)
+        if form.is_valid():
+            idAnime = form.cleaned_data['idAnime']
+            anime = get_object_or_404(Anime, pk=idAnime)
+            shelf = shelve.open("dataRS.dat")
+            Prefs = shelf['ItemsPrefs']
+            shelf.close()
+            rankings = getRecommendations(Prefs,int(idAnime))
+            recomendadas = rankings[:5]
+            usuarios = []
+            puntuaciones = []
+            for re in recomendadas:
+                usuarios.append(Puntuacion.objects.get(pk=re[1]))
+                puntuaciones.append(re[0])
+            items= zip(usuarios,puntuaciones)
+            
+    return render(request, 'recomendar_usuarios_animes.html', {'formulario':formulario, 'items':items, 'anime':anime, 'STATIC_URL':settings.STATIC_URL})
