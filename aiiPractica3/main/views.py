@@ -1,6 +1,14 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from main.populateDB import populate
+from main.models import Anime
+from main.forms import BusquedaPorFormatoForm
+
+from main.recommendations import  transformPrefs, calculateSimilarItems, getRecommendations, getRecommendedItems, topMatches
+from main.models import Puntuacion, Anime
+from django.http.response import HttpResponseRedirect
+from django.db.models import Avg, Count
+import shelve
 
 # Create your views here.
 def index(request):
