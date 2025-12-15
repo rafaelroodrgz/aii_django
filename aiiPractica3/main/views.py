@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from main.populateDB import populate
+from main.models import Anime
+from main.forms import BusquedaPorFormatoForm
+
 
 # Create your views here.
 def index(request):
@@ -17,3 +20,14 @@ def carga(request):
             return redirect("/")
            
     return render(request, 'confirmacion.html')
+
+def animesPorFormato(request):
+    formulario = BusquedaPorFormatoForm()
+    animes = None
+    
+    if request.method=='POST':
+        formulario = BusquedaPorFormatoForm(request.POST)      
+        if formulario.is_valid():
+            animes = Anime.objects.filter(formatoDeEmision=formulario.cleaned_data['formatoDeEmision'])
+            
+    return render(request, 'animesPorFormato.html', {'formulario':formulario, 'animes':animes})

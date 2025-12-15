@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index),
     path('carga/',views.carga),
+    path('animesPorFormato/',views.animesPorFormato),
 ]
