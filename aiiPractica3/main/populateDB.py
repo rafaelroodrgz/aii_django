@@ -12,7 +12,7 @@ def populateAnime():
         lector = csv.reader(f, delimiter=';')
         next(lector)
         for anime_id, name, genre, anime_type, episodes in lector:
-            lista.append(anime_id, name, genre, anime_type, int(episodes))
+            lista.append(Anime(animeid=anime_id, titulo=name, generos=genre, formatoDeEmision=anime_type, numEpisodios=int(episodes)))
     Anime.objects.bulk_create(lista)
 
     return len(lista)
@@ -25,7 +25,7 @@ def populatePuntuacion():
         lector = csv.reader(f, delimiter=';')
         next(lector)
         for user_id, anime_id, rating in lector:
-            lista.append(user_id, anime_id, int(rating))
+            lista.append(Puntuacion(idUsuario=user_id, anime=anime_id, puntuacion=int(rating)))
     Puntuacion.objects.bulk_create(lista)
 
     return Puntuacion.objects.count()
