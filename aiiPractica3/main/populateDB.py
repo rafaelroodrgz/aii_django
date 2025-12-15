@@ -26,7 +26,7 @@ def populatePuntuacion():
         next(lector)
         for user_id, anime_id, rating in lector:
             lista.append(user_id, anime_id, int(rating))
-    Anime.objects.bulk_create(lista)
+    Puntuacion.objects.bulk_create(lista)
 
     return Puntuacion.objects.count()
 
