@@ -1,18 +1,19 @@
 #encoding:utf-8
-from main.models import Anime, Puntuacion
-import csv
+from main.models import Anime, Puntuacion, FormatoDeEmision
+import csv, pathlib
 
-path = "data"
+path = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def populateAnime():
     Anime.objects.all().delete()
 
     lista=[]
-    with open(file=path + '/anime.csv', mode='r', encoding='utf-8') as f:
+    with open(file=path / 'anime.csv', mode='r', encoding='utf-8') as f:
         lector = csv.reader(f, delimiter=';')
         next(lector)
         for anime_id, name, genre, anime_type, episodes in lector:
-            lista.append(Anime(animeid=anime_id, titulo=name, generos=genre, formatoDeEmision=anime_type, numEpisodios=int(episodes)))
+            formatoDeEmision = FormatoDeEmision.objects.get_or_create(nombre=anime_type)[0]
+            lista.append(Anime(animeid=anime_id, titulo=name, generos=genre, formatoDeEmision=formatoDeEmision, numEpisodios=episodes))
     Anime.objects.bulk_create(lista)
 
     return len(lista)
@@ -21,11 +22,11 @@ def populatePuntuacion():
     Puntuacion.objects.all().delete()
 
     lista=[]
-    with open(file=path + '/ratings.csv', mode='r', encoding='utf-8') as f:
+    with open(file=path / 'ratings.csv', mode='r', encoding='utf-8') as f:
         lector = csv.reader(f, delimiter=';')
         next(lector)
         for user_id, anime_id, rating in lector:
-            lista.append(Puntuacion(idUsuario=user_id, anime=anime_id, puntuacion=int(rating)))
+            lista.append(Puntuacion(idUsuario=user_id, anime=Anime.objects.get(animeid=anime_id), puntuacion=int(rating)))
     Puntuacion.objects.bulk_create(lista)
 
     return Puntuacion.objects.count()

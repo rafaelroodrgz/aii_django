@@ -1,5 +1,11 @@
 from django.db import models
 
+class FormatoDeEmision(models.Model):
+    nombre = models.CharField(max_length=50, verbose_name='Formato de Emisión')
+
+    def __str__(self):
+        return self.nombre
+    
 class Anime(models.Model):
     animeid = models.CharField(
         max_length=10, 
@@ -8,8 +14,8 @@ class Anime(models.Model):
     )
     titulo = models.CharField(max_length=100, verbose_name='Título')
     generos = models.CharField(max_length=100, verbose_name='Géneros')
-    formatoDeEmision = models.CharField(max_length=100, verbose_name='Formato de Emisión')
-    numEpisodios = models.IntegerField(verbose_name='Número de Episodios')
+    formatoDeEmision = models.ForeignKey(FormatoDeEmision, on_delete=models.CASCADE, verbose_name='Formato de Emisión')
+    numEpisodios = models.CharField(max_length=10, verbose_name='Número de Episodios')
 
     def __str__(self):
         return self.titulo

@@ -1,0 +1,30 @@
+
+{% block encabezado %}
+<h1> B&uacute;squeda de Animes por Formato de Emisi&oacute;n </h1>
+{% endblock %}
+
+{% block contenido %}
+
+
+    	<form id="formulario" method="post" action=''>{% csrf_token %}
+    		{{formulario}}
+    		<input type='submit' value='Realizar B&uacute;squeda'/>
+    	</form>
+	    
+	    <hr>
+
+	    {% if animes %}
+		    <h3> Total de Animes del Formato de Emisi&oacute;n:  {{ animes|length }}</h3>
+
+			{% for row in animes %}
+			    <dt><b>T&iacute;tulo: </b>{{row.titulo}}</dt>
+                <dd><b>Géneros: </b> {{row.generos}} </dd>
+                <dd><b>Formato de Emisión: </b> {{row.formatoDeEmision}} </dd>
+                <dd><b>Número de Episodios: </b> {{row.numEpisodios}} </dd>			    	    
+			{% endfor %}
+
+			</dl>
+
+		{% endif %}
+	</div>
+{% endblock %}
