@@ -1,0 +1,13 @@
+{% extends 'master.html' %}
+
+{% block titulo %} Lista de las 50 Mejores Pel&iacute;culas con m&aacute;s de 100 Puntuaciones {% endblock %}
+
+
+{% block contenido %}
+	    <dl>
+		{% for row in animes %}
+		    <dt>{{row.titulo}}</dt>
+		    <dd>{{row.fechaEstreno}} </a></dd>	
+		{% endfor %}
+		</dl>
+{% endblock %}
