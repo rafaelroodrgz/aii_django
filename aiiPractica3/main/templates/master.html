@@ -1,0 +1,48 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang='es'>
+  <head>
+	<meta charset='utf-8'>
+		<link rel="stylesheet" href="{{STATIC_URL}}css/uikit.min.css" />
+        <script src="{{STATIC_URL}}js/jquery.min.js"></script>
+        <script src="{{STATIC_URL}}js/uikit.min.js"></script>
+  </head>
+  <body>
+  
+
+	<h1>EJERCICIO DE RS COLABORATIVOS - MOVIELENS 100K</h1>
+    <nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="#">Inicio</a>
+            <div class="uk-navbar-dropdown">
+                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                        <li><a href="/carga">CARGAR LA BASE DE DATOS</a></li>
+                        <li><a href="/loadRS">CARGAR RECSYS</a></li>
+                    </ul>
+                </div>
+            </li>
+           <li><a href="#">B&uacute;squedas</a>
+                <div class="uk-navbar-dropdown">
+                    <ul class="uk-nav uk-navbar-dropdown-nav">
+						<li><a href="/animesPorFormato">ANIMES POR FORMATO DE EMISIÓN</a></li>
+						<li><a href="/animesMasPopulares">ANIMES MÁS POPULARES</a></li>
+						<li><a href="/recomendarUsuarios">RECOMENDAR USUARIOS</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+</nav>
+	    
+
+		<hr>
+ 		
+ 		<h1 >{% block titulo %} {% endblock %}</h1>
+
+		{% block contenido %} {% endblock %}
+  </body>
+</html>
