@@ -23,6 +23,6 @@ urlpatterns = [
     path('',views.index),
     path('carga/',views.carga),
     path('loadRS/', views.loadRS),
-    path('animesMasPopulares',views.mostrar_animes_mas_populares),
+    path('animesMasPopulares',views.mostrar_animes_mas_puntuaciones),
     path('animesPorFormato/',views.animesPorFormato)
 ]
