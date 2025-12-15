@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from main.populateDB import populate
-from main.models import Anime
 from main.forms import BusquedaPorFormatoForm
 
 from main.recommendations import  transformPrefs, calculateSimilarItems, getRecommendations, getRecommendedItems, topMatches
@@ -9,6 +8,8 @@ from main.models import Puntuacion, Anime
 from django.http.response import HttpResponseRedirect
 from django.db.models import Avg, Count
 import shelve
+from django.db.models import Count
+import math
 
 # Create your views here.
 def index(request):
@@ -56,10 +57,61 @@ def loadDict():
     shelf['SimItems']=calculateSimilarItems(Prefs, n=10)
     shelf.close()
 
+
+
+def calcular_distancia_euclidea(puntos_anime_a, puntos_anime_b):
+    usuarios_comunes = set(puntos_anime_a.keys()) & set(puntos_anime_b.keys())
+    
+    if not usuarios_comunes:
+        return float('inf') 
+    suma_cuadrados = sum(
+        pow(puntos_anime_a[usuario] - puntos_anime_b[usuario], 2) 
+        for usuario in usuarios_comunes
+    )
+    return math.sqrt(suma_cuadrados)
+
+
 def mostrar_animes_mas_puntuaciones(request):
-#     ANIMES MÁS POPULARES. Muestre los tres animes que más 
-# puntuaciones han recibido (Título y número de puntuaciones recibidas). Para cada uno 
-# de ellos mostrar también los tres animes que más se le parecen (Título y similitud), 
-# usando la distancia Euclidea como medida de similitud. 
-    animes = Anime.objects.annotate(num_rating=Count('puntuacion__puntuacion')).order_by('-num_rating')[:3]
-    return render(request, 'animes_mas_puntuados.html', {'animes':animes, 'STATIC_URL':settings.STATIC_URL})
+    top_animes = Anime.objects.annotate(
+        num_rating=Count('puntuacion')
+    ).order_by('-num_rating')[:3]
+    
+    lista_resultados = []
+
+    for anime_principal in top_animes:
+        
+        notas_principal = dict(
+            Puntuacion.objects.filter(anime=anime_principal)
+            .values_list('idUsuario', 'puntuacion')
+        )
+        
+        ranking_similitud = []
+        
+        otros_animes = Anime.objects.exclude(pk=anime_principal.pk)
+        
+        for otro in otros_animes:
+            notas_otro = dict(
+                Puntuacion.objects.filter(anime=otro)
+                .values_list('idUsuario', 'puntuacion')
+            )
+            
+            distancia = calcular_distancia_euclidea(notas_principal, notas_otro)
+            
+            if distancia != float('inf'):
+                ranking_similitud.append({
+                    'titulo': otro.titulo,
+                    'distancia': round(distancia, 2)
+                })
+        
+        ranking_similitud.sort(key=lambda x: x['distancia'])
+        top_3_parecidos = ranking_similitud[:40]
+        
+        lista_resultados.append({
+            'titulo_principal': anime_principal.titulo,
+            'votos_principales': anime_principal.num_rating,
+            'similares': top_3_parecidos
+        })
+
+    return render(request, 'animes_mas_puntuados.html', {
+        'lista_animes': lista_resultados, 
+    })

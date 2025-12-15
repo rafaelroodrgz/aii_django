@@ -1,13 +1,26 @@
 {% extends 'master.html' %}
 
-{% block titulo %} Lista de las 50 Mejores Pel&iacute;culas con m&aacute;s de 100 Puntuaciones {% endblock %}
-
+{% block titulo %} Top 3 Animes y Similitudes {% endblock %}
 
 {% block contenido %}
-	    <dl>
-		{% for row in animes %}
-		    <dt>{{row.titulo}}</dt>
-		    <dd>{{row.fechaEstreno}} </a></dd>	
-		{% endfor %}
-		</dl>
+    <dl>
+    {% for item in lista_animes %}
+        <dt><b> {{ item.titulo_principal }}</b></dt>
+        
+        <dd>
+            Puntuaciones recibidas: {{ item.votos_principales }}
+            <br>
+            <strong>Animes similares:</strong>
+            <ul>
+                {% for similar in item.similares %}
+                    <li>
+                        {{ similar.titulo }} - (Similitud: {{ similar.distancia }})
+                    </li>
+                {% empty %}
+                    <li>No hay suficientes datos para calcular similitud.</li>
+                {% endfor %}
+            </ul>
+        </dd>
+        <br> {% endfor %}
+    </dl>
 {% endblock %}
